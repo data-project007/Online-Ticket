@@ -1,12 +1,16 @@
-# Stage 1: Compile the React application
+# Stage 1: Build the React application static files
 FROM node:18 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# ---> ADD THIS LINE RIGHT HERE <---
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 RUN npm run build
 
-# Stage 2: Serve the compiled static assets via Nginx
+# Stage 2: Serve the static files using Nginx
 FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 80
